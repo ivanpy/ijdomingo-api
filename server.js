@@ -11,7 +11,7 @@ mongoose.connect('mongodb://admin:admin@ds143980.mlab.com:43980/bdjdom', (err, r
 		console.error('Error to connect Database: bdjdom');
 		throw err;
 	}else{
-		console.info('Se conectó con exito a la base de datos: node-api-mdb');
+		console.info('Se conectó con exito a la base de datos: bdjdom');
 		app.listen(port, () => console.log(`Servidor ejecutandose en http://localhost:${port}`));
 	}
 });
