@@ -14,7 +14,7 @@ function agregarInscripcion (req, res){
 		if(err){
 			res.status(500).send({message: "Error al guardar inscripción"});
 		}else{
-			res.status(200).send({message: "Dato de la inscripcion guardado", inscripcion: InscripcionGuardado});
+			res.status(200).send({message: "Dato de la inscripcion guardado", inscripcion: inscripcionGuardado});
 		}
 	});
 }
