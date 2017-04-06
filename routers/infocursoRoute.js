@@ -11,12 +11,12 @@ router.get('/infocurso/:id', infocursoController.buscarInfocursoPorId);
 router.post('/infocurso/agregar', infocursoController.agregarInfocurso);
 
 //Route para editar infocurso
-router.put('/infocurso/editar/:id', alumnoController.editarInfocurso);
+router.put('/infocurso/editar/:id', infocursoController.editarInfocurso);
 
 //Ruta para borrar infocurso
-router.delete('/infocurso/borrar/:id', alumnoController.borrarInfocurso);
+router.delete('/infocurso/borrar/:id', infocursoController.borrarInfocurso);
 
 //ruta para listar infocurso
-router.get('/infocursos', infocursoController.listarInfocursos);
+router.get('/infocursos', infocursoController.listarInfocurso);
 
 module.exports = router;

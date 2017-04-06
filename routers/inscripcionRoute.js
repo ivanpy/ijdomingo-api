@@ -5,7 +5,7 @@ var inscripcionController = require('../controllers/inscripcionController');
 var router = express.Router();
 
 //Ruta para buscar por el id del inscripcion
-router.get('/inscripcion/:id', infocursoController.buscarInscripcionPorId);
+router.get('/inscripcion/:id', inscripcionController.buscarInscripcionPorId);
 
 //Ruta para agregar inscripcion
 router.post('/inscripcion/agregar', inscripcionController.agregarInscripcion);

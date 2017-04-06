@@ -41,7 +41,7 @@ function borrarInfocurso (req, res){
 		if(!infocursoABorrar){
 			res.status(404).send({message: "curso no encontrado"});
 		}else{
-			alumnoABorrar.remove(err => {
+			infocursoABorrar.remove(err => {
 				if(err){
 					res.status(500).send({message: "Error al borrar el curso", infocursoId: id});
 				}else{
@@ -53,7 +53,7 @@ function borrarInfocurso (req, res){
 
 }
 
-function listarCursos (req, res){
+function listarInfocurso (req, res){
 	Infocurso.find({}).sort('curso').exec((err, listInfocursos) => {
 		if(err){
 			res.status(500).send({message: "Error al listar Información de este curso"});

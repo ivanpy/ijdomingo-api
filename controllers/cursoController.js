@@ -3,7 +3,7 @@
 var Curso = require('../models/curso');
 
 
-function agregarAlumno (req, res){
+function agregarCurso (req, res){
 	var parametros = req.body;
 	var curso = new Curso();
 	curso.nombre = parametros.nombre;
@@ -28,7 +28,7 @@ function editarCurso (req, res){
 	});
 }
 
-function borrarcurso (req, res){
+function borrarCurso (req, res){
 	var id = req.params.id;
 	Alumno.findById(id, (err, cursoABorrar) => {
 		if(err){
@@ -61,6 +61,7 @@ function listarCursos (req, res){
 			}
 		}
 	});
+}
 
 function buscarCursoPorId (req, res){
 	var id = req.params.id;
@@ -81,7 +82,6 @@ module.exports = {
 	agregarCurso,
 	editarCurso,
 	borrarCurso,
-	listarCurso,
-	buscarCursoPorNombre,
+	listarCursos,
 	buscarCursoPorId
 }
