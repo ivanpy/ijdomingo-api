@@ -19,7 +19,7 @@ function agregarCurso (req, res){
 function editarCurso (req, res){
 	var id = req.params.id;
 	var parametros = req.body;
-	Alumno.findByIdAndUpdate(id, parametros, (err, cursoEditado) => {
+	Curso.findByIdAndUpdate(id, parametros, (err, cursoEditado) => {
 		if(err){
 			res.status(500).send({message: "Error al editar curso", cursoId: id});
 		}else{
@@ -30,7 +30,7 @@ function editarCurso (req, res){
 
 function borrarCurso (req, res){
 	var id = req.params.id;
-	Alumno.findById(id, (err, cursoABorrar) => {
+	Curso.findById(id, (err, cursoABorrar) => {
 		if(err){
 			res.status(500).send({message: "Error al encontrar el curso", cursoId: id});
 		}
@@ -50,14 +50,14 @@ function borrarCurso (req, res){
 }
 
 function listarCursos (req, res){
-	curso.find({}).sort('nombre').exec((err, listCurso) => {
+	Curso.find({}).sort('nombre').exec((err, listaCurso) => {
 		if(err){
 			res.status(500).send({message: "Error al listar cursos"});
 		}else{
-			if(!listCurso){
+			if(!listaCurso){
 				res.status(404).send({message: "Lista vacia"});
 			}else{
-				res.status(200).send({curso: listCursos});
+				res.status(200).send({curso: listaCurso});
 			}
 		}
 	});
