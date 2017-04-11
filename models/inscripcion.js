@@ -7,7 +7,7 @@ var InscripcionSchema = Schema({
 	alumno: String,
 	curso: String,
 	fecinsc: String,
-	estadoc: String
+	estadoc: Boolean
 });
 
 module.exports = mongoose.model('Inscripcion', InscripcionSchema);

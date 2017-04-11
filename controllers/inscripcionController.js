@@ -9,7 +9,7 @@ function agregarInscripcion (req, res){
 	inscripcion.alumno = parametros.alumno;
 	inscripcion.curso = parametros.curso;
 	inscripcion.fecinsc = parametros.fecinsc;
-	inscripcion.estado = parametros.estado;
+	inscripcion.estadoc = parametros.estadoc;
 	inscripcion.save((err, inscripcionGuardado) => {
 		if(err){
 			res.status(500).send({message: "Error al guardar inscripción"});
