@@ -17,6 +17,6 @@ router.put('/inscripcion/editar/:id', inscripcionController.editarInscripcion);
 router.delete('/inscripcion/borrar/:id', inscripcionController.borrarInscripcion);
 
 //ruta para listar inscripcion
-router.get('/inscripcion', inscripcionController.listarInscripcion);
+router.get('/inscripciones', inscripcionController.listarInscripciones);
 
 module.exports = router;

@@ -52,15 +52,15 @@ function borrarInscripcion (req, res){
 
 }
 
-function listarInscripcion (req, res){
-	inscripcion.find({}).sort('alumno').exec((err, listInscripcion) => {
+function listarInscripciones (req, res){
+	Inscripcion.find({}).sort('curso').exec((err, listaInscripciones) => {
 		if(err){
 			res.status(500).send({message: "Error al listar inscripcion"});
 		}else{
-			if(!listarInscripcion){
+			if(!listaInscripciones){
 				res.status(404).send({message: "Lista vacia"});
 			}else{
-				res.status(200).send({inscripcion: listInscripcion});
+				res.status(200).send({inscripcion: listaInscripciones});
 			}
 		}
 	});
@@ -92,7 +92,7 @@ module.exports = {
 	agregarInscripcion,
 	editarInscripcion,
 	borrarInscripcion,
-	listarInscripcion,
+	listarInscripciones,
 	buscarInscripcionPorAlumno,
 	buscarInscripcionPorId
 }
