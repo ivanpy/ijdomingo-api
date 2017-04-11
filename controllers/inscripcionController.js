@@ -22,7 +22,7 @@ function agregarInscripcion (req, res){
 function editarInscripcion (req, res){
 	var id = req.params.id;
 	var parametros = req.body;
-	inscripcion.findByIdAndUpdate(id, parametros, (err, inscripcionEditado) => {
+	Inscripcion.findByIdAndUpdate(id, parametros, (err, inscripcionEditado) => {
 		if(err){
 			res.status(500).send({message: "Error al editar curso", inscripcionId: id});
 		}else{
@@ -33,7 +33,7 @@ function editarInscripcion (req, res){
 
 function borrarInscripcion (req, res){
 	var id = req.params.id;
-	inscripcion.findById(id, (err, inscripcionABorrar) => {
+	Inscripcion.findById(id, (err, inscripcionABorrar) => {
 		if(err){
 			res.status(500).send({message: "Error al encontrar la inscripcion", inscripcionId: id});
 		}
@@ -75,7 +75,7 @@ function buscarInscripcionPorEstadoc (req, res){
 
 function buscarInscripcionPorId (req, res){
 	var id = req.params.id;
-	Infocurso.findById(id, (err, inscripcionEncontrado) => {
+	Inscripcion.findById(id, (err, inscripcionEncontrado) => {
 		if(err){
 			res.status(500).send({message: "Error al encontrar inscripcion", inscripcionId: id});
 		}else{
