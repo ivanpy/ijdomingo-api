@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var InscripcionSchema = Schema({
+	dni: String,
 	alumno: String,
 	curso: String,
 	fecinsc: String,

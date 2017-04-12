@@ -6,6 +6,7 @@ var Inscripcion = require('../models/inscripcion');
 function agregarInscripcion (req, res){
 	var parametros = req.body;
 	var inscripcion = new Inscripcion();
+	inscripcion.dni = parametros.dni;
 	inscripcion.alumno = parametros.alumno;
 	inscripcion.curso = parametros.curso;
 	inscripcion.fecinsc = parametros.fecinsc;
