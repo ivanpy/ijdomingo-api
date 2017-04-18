@@ -19,4 +19,13 @@ router.delete('/inscripcion/borrar/:id', inscripcionController.borrarInscripcion
 //ruta para listar inscripcion
 router.get('/inscripciones', inscripcionController.listarInscripciones);
 
+//Ruta para buscar por el dni del inscripcion
+router.get('/inscripcion/buscar/:dni', inscripcionController.buscarInscripcionPorDni);
+
+//Ruta para buscar por el dni y curso
+router.get('/inscripcion/buscar/:dni/:curso', inscripcionController.buscarInscripcionPorDniYCurso);
+
+//Ruta para buscar por el estado de docuemento
+router.get('/inscripcion/buscar/docPendientes', inscripcionController.buscarInscripcionPorEstadoc);
+
 module.exports = router;

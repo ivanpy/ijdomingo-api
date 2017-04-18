@@ -67,11 +67,50 @@ function listarInscripciones (req, res){
 	});
 }
 
-function buscarInscripcionPorAlumno (req, res){
-
+function buscarInscripcionPorDni (req, res){
+	var dni = req.params.dni;
+	Inscripcion.find({ dni: dni }).sort('curso').exec((err, resultadoInscripcion) => {
+		if(err){
+			res.status(500).send({message: "Error del servidor"});
+		}else{
+			if(!resultadoInscripcion){
+				res.status(404).send({message: "Las inscripciones no para este Dni no fueron encontradas", dni: dni});
+			}else{
+				res.status(200).send({resultadoInscripcion: resultadoInscripcion});
+			}
+		}
+	});
 }
-function buscarInscripcionPorEstadoc (req, res){
 
+function buscarInscripcionPorDniYCurso (req, res){
+	var dni = req.params.dni;
+	var curso = req.params.curso;
+	var dni = req.params.dni;
+	Inscripcion.find({ dni: dni, curso: curso }).sort('curso').exec((err, resultadoInscripcion) => {
+		if(err){
+			res.status(500).send({message: "Error del servidor"});
+		}else{
+			if(!resultadoInscripcion){
+				res.status(404).send({message: "Inscripcion no encontrada"});
+			}else{
+				res.status(200).send({resultadoInscripcion: resultadoInscripcion});
+			}
+		}
+	});
+}
+
+function buscarInscripcionPorEstadoc (req, res){
+	Inscripcion.find({ estadoc: false }).sort('alumno').exec((err, estadoDocumentos) => {
+		if(err){
+			res.status(500).send({message: "Error del servidor"});
+		}else{
+			if(!estadoDocumentos){
+				res.status(404).send({message: "No encontrado"});
+			}else{
+				res.status(200).send({estados: estadoDocumentos});
+			}
+		}
+	});
 }
 
 function buscarInscripcionPorId (req, res){
@@ -94,6 +133,8 @@ module.exports = {
 	editarInscripcion,
 	borrarInscripcion,
 	listarInscripciones,
-	buscarInscripcionPorAlumno,
-	buscarInscripcionPorId
+	buscarInscripcionPorDni,
+	buscarInscripcionPorDniYCurso,
+	buscarInscripcionPorId,
+	buscarInscripcionPorEstadoc
 }
