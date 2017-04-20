@@ -6,7 +6,7 @@ var port = process.env.PORT || 1245;
 
 
 // MongoDb connection with mongoose
-mongoose.connect('mongodb://admin:admin@ds143980.mlab.com:43980/bdjdom', (err, res) => {
+mongoose.connect('mongodb://admin:password@ds111851.mlab.com:11851/bdjdomprod', (err, res) => {
 	if(err){
 		console.error('Error to connect Database: bdjdom');
 		throw err;
