@@ -15,6 +15,8 @@ var AlumnoSchema = Schema({
 	celular: String,
 	provincia: String,
 	localidad: String,
+	domicilio: String,
+	barrio: String,
 	ocupacion: String
 });
 
