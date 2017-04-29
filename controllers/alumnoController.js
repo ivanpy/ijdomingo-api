@@ -17,6 +17,8 @@ function agregarAlumno (req, res){
 	alumno.celular = parametros.celular;
 	alumno.provincia = parametros.provincia;
 	alumno.localidad = parametros.localidad;
+	alumno.domicilio = parametros.domicilio;
+	alumno.barrio = parametros.barrio;
 	alumno.ocupacion = parametros.ocupacion;
 	alumno.save((err, alumnoGuardado) => {
 		if(err){
