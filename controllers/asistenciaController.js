@@ -88,7 +88,8 @@ function buscarAsistenciaPorId (req, res){
 function buscarAsistenciaPorAlumnoYCurso (req, res){
 	var dni = req.params.dni;
 	var curso = req.params.curso;
-	Asistencia.find({ dni: dni, curso: curso }).sort('fecasis').exec((err, asitenciasAlumno) => {
+	var fecha = req.params.fecha;
+	Asistencia.find({ dni: dni, curso: curso, fecasis: fecha }).sort('fecasis').exec((err, asitenciasAlumno) => {
 		if(err){
 			res.status(500).send({message: "Error del servidor"});
 		}else{
