@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var AsistenciaSchema = Schema({
+	dni: String,
 	alumno: String,
 	fecasis: String,
 	curso: String,

@@ -6,6 +6,7 @@ var Asistencia = require('../models/asistencia');
 function agregarAsistencia (req, res){
 	var parametros = req.body;
 	var asistencia = new Asistencia();
+	asistencia.dni = parametros.dni;
 	asistencia.alumno = parametros.alumno;
 	asistencia.curso = parametros.curso;
 	asistencia.fecasis = parametros.fecasis;
@@ -22,7 +23,7 @@ function agregarAsistencia (req, res){
 function editarAsistencia (req, res){
 	var id = req.params.id;
 	var parametros = req.body;
-	asistencia.findByIdAndUpdate(id, parametros, (err, asistenciaEditado) => {
+	Asistencia.findByIdAndUpdate(id, parametros, (err, asistenciaEditado) => {
 		if(err){
 			res.status(500).send({message: "Error al editar asistencia", asistenciaId: id});
 		}else{
@@ -33,7 +34,7 @@ function editarAsistencia (req, res){
 
 function borrarAsistencia (req, res){
 	var id = req.params.id;
-	asistencia.findById(id, (err, asistenciaABorrar) => {
+	Asistencia.findById(id, (err, asistenciaABorrar) => {
 		if(err){
 			res.status(500).send({message: "Error al encontrar la asistencia", asistenciaId: id});
 		}
@@ -53,7 +54,7 @@ function borrarAsistencia (req, res){
 }
 
 function listarAsistencia (req, res){
-	asistencia.find({}).sort('alumno').exec((err, listAsistencia) => {
+	Asistencia.find({}).sort('alumno').exec((err, listAsistencia) => {
 		if(err){
 			res.status(500).send({message: "Error al listar asistencia"});
 		}else{
@@ -71,7 +72,7 @@ function buscarAsistenciaPorAlumno (req, res){
 }
 function buscarAsistenciaPorId (req, res){
 	var id = req.params.id;
-	asistencia.findById(id, (err, asistenciaEncontrado) => {
+	Asistencia.findById(id, (err, asistenciaEncontrado) => {
 		if(err){
 			res.status(500).send({message: "Error al encontrar asistencia", asistenciaId: id});
 		}else{
@@ -84,11 +85,28 @@ function buscarAsistenciaPorId (req, res){
 	});
 }
 
+function buscarAsistenciaPorAlumnoYCurso (req, res){
+	var dni = req.params.dni;
+	var curso = req.params.curso;
+	Asistencia.find({ dni: dni, curso: curso }).sort('fecasis').exec((err, asitenciasAlumno) => {
+		if(err){
+			res.status(500).send({message: "Error del servidor"});
+		}else{
+			if(!asitenciasAlumno){
+				res.status(404).send({message: "Asistencia no encontrada"});
+			}else{
+				res.status(200).send({asitenciasAlumno: asitenciasAlumno});
+			}
+		}
+	});
+}
+
 module.exports = {
 	agregarAsistencia,
 	editarAsistencia,
 	borrarAsistencia,
 	listarAsistencia,
 	buscarAsistenciaPorAlumno,
-	buscarAsistenciaPorId
+	buscarAsistenciaPorId,
+	buscarAsistenciaPorAlumnoYCurso
 }
