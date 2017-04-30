@@ -14,7 +14,7 @@ function agregarAsistencia (req, res){
 		if(err){
 			res.status(500).send({message: "Error al guardar asistencia"});
 		}else{
-			res.status(200).send({message: "Dato de la asistencia guardado", inscripcion: InscripcionGuardado});
+			res.status(200).send({message: "Asistencia guardada", asistencia: asistenciaGuardado});
 		}
 	});
 }
