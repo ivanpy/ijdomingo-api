@@ -11,6 +11,7 @@ function agregarInscripcion (req, res){
 	inscripcion.curso = parametros.curso;
 	inscripcion.fecinsc = parametros.fecinsc;
 	inscripcion.estadoc = parametros.estadoc;
+	inscripcion.estado = parametros.estado;
 	inscripcion.save((err, inscripcionGuardado) => {
 		if(err){
 			res.status(500).send({message: "Error al guardar inscripción"});
@@ -54,7 +55,7 @@ function borrarInscripcion (req, res){
 }
 
 function listarInscripciones (req, res){
-	Inscripcion.find({}).sort('curso').exec((err, listaInscripciones) => {
+	Inscripcion.find({ estado: true }).sort('curso').exec((err, listaInscripciones) => {
 		if(err){
 			res.status(500).send({message: "Error al listar inscripcion"});
 		}else{
@@ -69,7 +70,7 @@ function listarInscripciones (req, res){
 
 function buscarInscripcionPorDni (req, res){
 	var dni = req.params.dni;
-	Inscripcion.find({ dni: dni }).sort('curso').exec((err, resultadoInscripcion) => {
+	Inscripcion.find({ dni: dni, estado: true }).sort('curso').exec((err, resultadoInscripcion) => {
 		if(err){
 			res.status(500).send({message: "Error del servidor"});
 		}else{
@@ -86,7 +87,7 @@ function buscarInscripcionPorDniYCurso (req, res){
 	var dni = req.params.dni;
 	var curso = req.params.curso;
 	var dni = req.params.dni;
-	Inscripcion.find({ dni: dni, curso: curso }).sort('curso').exec((err, resultadoInscripcion) => {
+	Inscripcion.find({ dni: dni, curso: curso, estado: true }).sort('curso').exec((err, resultadoInscripcion) => {
 		if(err){
 			res.status(500).send({message: "Error del servidor"});
 		}else{
@@ -100,7 +101,7 @@ function buscarInscripcionPorDniYCurso (req, res){
 }
 
 function buscarInscripcionPorEstadoc (req, res){
-	Inscripcion.find({ estadoc: false }).sort('alumno').exec((err, estadoDocumentos) => {
+	Inscripcion.find({ estadoc: false, estado: true }).sort('alumno').exec((err, estadoDocumentos) => {
 		if(err){
 			res.status(500).send({message: "Error del servidor"});
 		}else{
