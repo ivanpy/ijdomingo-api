@@ -25,6 +25,9 @@ router.get('/inscripcion/buscar/:dni', inscripcionController.buscarInscripcionPo
 //Ruta para buscar por el dni y curso
 router.get('/inscripcion/buscar/:dni/:curso', inscripcionController.buscarInscripcionPorDniYCurso);
 
+//Ruta para buscar por curso
+router.get('/inscripcion/buscar/:curso', inscripcionController.buscarInscripcionPorCurso);
+
 //Ruta para buscar por el estado de docuemento
 router.get('/inscripcion/buscar/docPendientes', inscripcionController.buscarInscripcionPorEstadoc);
 

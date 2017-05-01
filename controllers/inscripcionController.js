@@ -100,6 +100,21 @@ function buscarInscripcionPorDniYCurso (req, res){
 	});
 }
 
+function buscarInscripcionPorCurso (req, res){
+	var curso = req.params.curso;
+	Inscripcion.find({ curso: curso, estado: true }).sort('alumno').exec((err, resultadoInscripcion) => {
+		if(err){
+			res.status(500).send({message: "Error del servidor"});
+		}else{
+			if(!resultadoInscripcion){
+				res.status(404).send({message: "Inscripcion no encontrada"});
+			}else{
+				res.status(200).send({resultadoInscripcion: resultadoInscripcion});
+			}
+		}
+	});
+}
+
 function buscarInscripcionPorEstadoc (req, res){
 	Inscripcion.find({ estadoc: false, estado: true }).sort('alumno').exec((err, estadoDocumentos) => {
 		if(err){
@@ -137,5 +152,6 @@ module.exports = {
 	buscarInscripcionPorDni,
 	buscarInscripcionPorDniYCurso,
 	buscarInscripcionPorId,
-	buscarInscripcionPorEstadoc
+	buscarInscripcionPorEstadoc,
+	buscarInscripcionPorCurso
 }
