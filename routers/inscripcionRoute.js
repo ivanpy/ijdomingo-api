@@ -4,9 +4,6 @@ var express = require('express');
 var inscripcionController = require('../controllers/inscripcionController');
 var router = express.Router();
 
-//Ruta para buscar por el id del inscripcion
-router.get('/inscripcion/:id', inscripcionController.buscarInscripcionPorId);
-
 //Ruta para agregar inscripcion
 router.post('/inscripcion/agregar', inscripcionController.agregarInscripcion);
 
@@ -30,5 +27,8 @@ router.get('/inscripcion/buscar/curso/:curso', inscripcionController.buscarInscr
 
 //Ruta para buscar por el estado de docuemento
 router.get('/inscripcion/buscar/docPendientes', inscripcionController.buscarInscripcionPorEstadoc);
+
+//Ruta para buscar por el id del inscripcion
+router.get('/inscripcion/buscar/id/:id', inscripcionController.buscarInscripcionPorId);
 
 module.exports = router;
