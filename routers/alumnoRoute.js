@@ -19,4 +19,7 @@ router.delete('/alumno/borrar/:id', alumnoController.borrarAlumno);
 //ruta para listar alumno
 router.get('/alumnos', alumnoController.listarAlumnos);
 
+//Ruta para buscar por dni
+router.get('/alumno/buscar/dni/:dni', alumnoController.buscarAlumnoPorDni);
+
 module.exports = router;
