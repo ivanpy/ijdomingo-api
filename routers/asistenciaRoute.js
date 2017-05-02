@@ -19,4 +19,7 @@ router.delete('/asistencia/borrar/:id', asistenciaController.borrarAsistencia);
 //ruta para listar asistencia
 router.get('/asistencia', asistenciaController.listarAsistencia);
 
+//Ruta para buscar por el dni y curso
+router.get('/asistencia/buscar/:dni/:curso/:fecha', asistenciaController.buscarAsistenciaPorAlumnoYCurso);
+
 module.exports = router;

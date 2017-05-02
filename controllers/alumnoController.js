@@ -77,7 +77,18 @@ function listarAlumnos (req, res){
 }
 
 function buscarAlumnoPorDni (req, res){
-
+	var dni = req.params.dni;
+	Alumno.find({dni: dni}).exec((err, alumnoDni) => {
+		if(err){
+			res.status(500).send({message: "Error al listar alumnos"});
+		}else{
+			if(!alumnoDni){
+				res.status(404).send({message: "Lista vacia"});
+			}else{
+				res.status(200).send({alumnoDni: alumnoDni});
+			}
+		}
+	});
 }
 
 function buscarAlumnoPorId (req, res){

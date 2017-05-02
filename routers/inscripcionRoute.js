@@ -4,9 +4,6 @@ var express = require('express');
 var inscripcionController = require('../controllers/inscripcionController');
 var router = express.Router();
 
-//Ruta para buscar por el id del inscripcion
-router.get('/inscripcion/:id', inscripcionController.buscarInscripcionPorId);
-
 //Ruta para agregar inscripcion
 router.post('/inscripcion/agregar', inscripcionController.agregarInscripcion);
 
@@ -20,12 +17,18 @@ router.delete('/inscripcion/borrar/:id', inscripcionController.borrarInscripcion
 router.get('/inscripciones', inscripcionController.listarInscripciones);
 
 //Ruta para buscar por el dni del inscripcion
-router.get('/inscripcion/buscar/:dni', inscripcionController.buscarInscripcionPorDni);
+router.get('/inscripcion/buscar/dni/:dni', inscripcionController.buscarInscripcionPorDni);
 
 //Ruta para buscar por el dni y curso
-router.get('/inscripcion/buscar/:dni/:curso', inscripcionController.buscarInscripcionPorDniYCurso);
+router.get('/inscripcion/buscar/cursodni/:dni/:curso', inscripcionController.buscarInscripcionPorDniYCurso);
+
+//Ruta para buscar por curso
+router.get('/inscripcion/buscar/curso/:curso', inscripcionController.buscarInscripcionPorCurso);
 
 //Ruta para buscar por el estado de docuemento
 router.get('/inscripcion/buscar/docPendientes', inscripcionController.buscarInscripcionPorEstadoc);
+
+//Ruta para buscar por el id del inscripcion
+router.get('/inscripcion/buscar/id/:id', inscripcionController.buscarInscripcionPorId);
 
 module.exports = router;
