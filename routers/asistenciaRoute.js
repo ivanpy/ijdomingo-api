@@ -11,7 +11,7 @@ router.get('/asistencia/:id', asistenciaController.buscarAsistenciaPorId);
 router.post('/asistencia/agregar', asistenciaController.agregarAsistencia);
 
 //Route para editar asistencia
-router.put('/asistencia/editar/:id', asistenciaController.editarAsistencia);
+router.patch('/asistencia/editar/:id', asistenciaController.editarAsistencia);
 
 //Ruta para borrar asistencia
 router.delete('/asistencia/borrar/:id', asistenciaController.borrarAsistencia);
