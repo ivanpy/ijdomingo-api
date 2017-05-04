@@ -11,7 +11,7 @@ router.get('/asistencia/:id', asistenciaController.buscarAsistenciaPorId);
 router.post('/asistencia/agregar', asistenciaController.agregarAsistencia);
 
 //Route para editar asistencia
-router.put('/asistencia/editar/:id', asistenciaController.editarAsistencia);
+router.patch('/asistencia/editar/:id', asistenciaController.editarAsistencia);
 
 //Ruta para borrar asistencia
 router.delete('/asistencia/borrar/:id', asistenciaController.borrarAsistencia);
@@ -20,6 +20,9 @@ router.delete('/asistencia/borrar/:id', asistenciaController.borrarAsistencia);
 router.get('/asistencia', asistenciaController.listarAsistencia);
 
 //Ruta para buscar por el dni y curso
-router.get('/asistencia/buscar/:dni/:curso/:fecha', asistenciaController.buscarAsistenciaPorAlumnoYCurso);
+router.get('/asistencia/buscar/dni/:dni/curso/:curso/fecha/:fecha', asistenciaController.buscarAsistenciaPorAlumnoYCurso);
+
+//Ruta para buscar por curso y fecha
+router.get('/asistencia/buscar/curso/:curso/fecha/:fecha', asistenciaController.buscarAsistenciaPorCursoYFecha);
 
 module.exports = router;

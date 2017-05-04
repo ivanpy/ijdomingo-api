@@ -70,6 +70,7 @@ function listarAsistencia (req, res){
 function buscarAsistenciaPorAlumno (req, res){
 
 }
+
 function buscarAsistenciaPorId (req, res){
 	var id = req.params.id;
 	Asistencia.findById(id, (err, asistenciaEncontrado) => {
@@ -102,6 +103,22 @@ function buscarAsistenciaPorAlumnoYCurso (req, res){
 	});
 }
 
+function buscarAsistenciaPorCursoYFecha (req, res){
+	var curso = req.params.curso;
+	var fecha = req.params.fecha;
+	Asistencia.find({ curso: curso, fecasis: fecha }).sort('alumno').exec((err, resultadoAsisCursoFec) => {
+		if(err){
+			res.status(500).send({message: "Error del servidor"});
+		}else{
+			if(!resultadoAsisCursoFec){
+				res.status(404).send({message: "Asistencia no encontrada"});
+			}else{
+				res.status(200).send({asistenciaCursoFecha: resultadoAsisCursoFec});
+			}
+		}
+	});
+}
+
 module.exports = {
 	agregarAsistencia,
 	editarAsistencia,
@@ -109,5 +126,6 @@ module.exports = {
 	listarAsistencia,
 	buscarAsistenciaPorAlumno,
 	buscarAsistenciaPorId,
-	buscarAsistenciaPorAlumnoYCurso
+	buscarAsistenciaPorAlumnoYCurso,
+	buscarAsistenciaPorCursoYFecha
 }
