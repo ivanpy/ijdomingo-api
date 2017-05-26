@@ -4,6 +4,7 @@ var express = require("express");
 var bodyParser = require('body-parser')
 var app = express();
 
+var docente_router = require('./routers/docenteRoute');
 var alumno_router = require('./routers/alumnoRoute');
 var asistencia_router = require('./routers/asistenciaRoute');
 var curso_router = require('./routers/cursoRoute');
@@ -23,6 +24,7 @@ app.use((req, res, next) => {
 	next();
 });
 
+app.use('/api', docente_router);
 app.use('/api', alumno_router);
 app.use('/api', asistencia_router);
 app.use('/api', curso_router);
