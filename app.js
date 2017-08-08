@@ -9,6 +9,7 @@ var alumno_router = require('./routers/alumnoRoute');
 var asistencia_router = require('./routers/asistenciaRoute');
 var curso_router = require('./routers/cursoRoute');
 var inscripcion_router = require('./routers/inscripcionRoute');
+var nota_router = require('./routers/notaRoute');
 var infocurso_router = require('./routers/infocursoRoute');
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -30,5 +31,6 @@ app.use('/api', asistencia_router);
 app.use('/api', curso_router);
 app.use('/api', inscripcion_router);
 app.use('/api', infocurso_router);
+app.use('/api', nota_router);
 
 module.exports = app;
