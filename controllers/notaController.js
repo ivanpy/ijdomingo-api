@@ -64,7 +64,7 @@ function listarNotas (req, res){
 			if(!listaNotas){
 				res.status(404).send({message: "Lista vacia"});
 			}else{
-				res.status(200).send({nota: listaNotas});
+				res.status(200).send({notas: listaNotas});
 			}
 		}
 	});
