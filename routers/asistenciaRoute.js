@@ -5,24 +5,24 @@ var asistenciaController = require('../controllers/asistenciaController');
 var router = express.Router();
 
 //Ruta para buscar por el id del asistencia
-router.get('/asistencia/:id', asistenciaController.buscarAsistenciaPorId);
+router.get('/asistencia/buscar/id/:id', asistenciaController.buscarPorId);
 
 //Ruta para agregar asistencia
-router.post('/asistencia/agregar', asistenciaController.agregarAsistencia);
+router.post('/asistencia/agregar', asistenciaController.agregar);
 
 //Route para editar asistencia
-router.patch('/asistencia/editar/:id', asistenciaController.editarAsistencia);
+router.patch('/asistencia/editar/:id', asistenciaController.editar);
 
 //Ruta para borrar asistencia
-router.delete('/asistencia/borrar/:id', asistenciaController.borrarAsistencia);
+router.delete('/asistencia/borrar/:id', asistenciaController.borrar);
 
-//ruta para listar asistencia
-router.get('/asistencia', asistenciaController.listarAsistencia);
+//ruta para listar asistencia por periodo
+router.get('/asistencias/:periodo', asistenciaController.listar);
 
 //Ruta para buscar por el dni y curso
-router.get('/asistencia/buscar/dni/:dni/curso/:curso/fecha/:fecha', asistenciaController.buscarAsistenciaPorAlumnoYCurso);
+router.get('/asistencia/buscar/alumno-curso-fecha/:alumno/:curso/:fecha', asistenciaController.buscarPorAlumnoYCursoYFecha);
 
 //Ruta para buscar por curso y fecha
-router.get('/asistencia/buscar/curso/:curso/fecha/:fecha', asistenciaController.buscarAsistenciaPorCursoYFecha);
+router.get('/asistencia/buscar/curso-fecha/:curso/:fecha', asistenciaController.buscarPorCursoYFecha);
 
 module.exports = router;

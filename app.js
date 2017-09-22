@@ -10,7 +10,11 @@ var asistencia_router = require('./routers/asistenciaRoute');
 var curso_router = require('./routers/cursoRoute');
 var inscripcion_router = require('./routers/inscripcionRoute');
 var nota_router = require('./routers/notaRoute');
-var infocurso_router = require('./routers/infocursoRoute');
+var usuario_router = require('./routers/usuarioRoute');
+var nacionalidad_router = require('./routers/nacionalidadRoute');
+var provincia_router = require('./routers/provinciaRoute');
+var localidad_router = require('./routers/localidadRoute');
+var periodo_router = require('./routers/periodoRoute');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -30,7 +34,11 @@ app.use('/api', alumno_router);
 app.use('/api', asistencia_router);
 app.use('/api', curso_router);
 app.use('/api', inscripcion_router);
-app.use('/api', infocurso_router);
+app.use('/api', usuario_router);
 app.use('/api', nota_router);
+app.use('/api', nacionalidad_router);
+app.use('/api', provincia_router);
+app.use('/api', localidad_router);
+app.use('/api', periodo_router);
 
 module.exports = app;

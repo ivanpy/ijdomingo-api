@@ -3,7 +3,7 @@
 var Curso = require('../models/curso');
 
 
-function agregarCurso (req, res){
+function agregar (req, res){
 	var parametros = req.body;
 	var curso = new Curso();
 	curso.nombre = parametros.nombre;
@@ -16,7 +16,7 @@ function agregarCurso (req, res){
 	});
 }
 
-function editarCurso (req, res){
+function editar (req, res){
 	var id = req.params.id;
 	var parametros = req.body;
 	Curso.findByIdAndUpdate(id, parametros, (err, cursoEditado) => {
@@ -28,7 +28,7 @@ function editarCurso (req, res){
 	});
 }
 
-function borrarCurso (req, res){
+function borrar (req, res){
 	var id = req.params.id;
 	Curso.findById(id, (err, cursoABorrar) => {
 		if(err){
@@ -49,21 +49,32 @@ function borrarCurso (req, res){
 
 }
 
-function listarCursos (req, res){
-	Curso.find({}).sort('nombre').exec((err, listaCurso) => {
+function listar (req, res){
+	var page = Number(req.query.page);
+	var size = Number(req.query.size);
+	var sort = req.query.sort;
+	var query = {};
+	var options = {
+	  sort: { nombre: sort || 'desc' },
+	  lean: false,
+	  page: page || 1, 
+	  limit: size || 50
+	};
+
+	Curso.paginate(query, options, function(err, cursos) {
 		if(err){
 			res.status(500).send({message: "Error al listar cursos"});
 		}else{
-			if(!listaCurso){
-				res.status(404).send({message: "Lista vacia"});
+			if(!cursos){
+				res.status(404).send({message: "No encontrado"});
 			}else{
-				res.status(200).send({curso: listaCurso});
+				res.status(200).send({curso: cursos});
 			}
 		}
 	});
 }
 
-function buscarCursoPorId (req, res){
+function buscarPorId (req, res){
 	var id = req.params.id;
 	Curso.findById(id, (err, cursoEncontrado) => {
 		if(err){
@@ -79,9 +90,9 @@ function buscarCursoPorId (req, res){
 }
 
 module.exports = {
-	agregarCurso,
-	editarCurso,
-	borrarCurso,
-	listarCursos,
-	buscarCursoPorId
+	agregar,
+	editar,
+	borrar,
+	listar,
+	buscarPorId
 }

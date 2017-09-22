@@ -3,14 +3,14 @@
 var Asistencia = require('../models/asistencia');
 
 
-function agregarAsistencia (req, res){
+function agregar (req, res){
 	var parametros = req.body;
 	var asistencia = new Asistencia();
-	asistencia.dni = parametros.dni;
-	asistencia.alumno = parametros.alumno;
-	asistencia.curso = parametros.curso;
 	asistencia.fecasis = parametros.fecasis;
 	asistencia.estado = parametros.estado;
+	asistencia.periodo = parametros.periodo._id;
+	asistencia.alumno = parametros.alumno._id;
+	asistencia.curso = parametros.curso._id;
 	asistencia.save((err, asistenciaGuardado) => {
 		if(err){
 			res.status(500).send({message: "Error al guardar asistencia"});
@@ -20,7 +20,7 @@ function agregarAsistencia (req, res){
 	});
 }
 
-function editarAsistencia (req, res){
+function editar (req, res){
 	var id = req.params.id;
 	var parametros = req.body;
 	Asistencia.findByIdAndUpdate(id, parametros, (err, asistenciaEditado) => {
@@ -32,7 +32,7 @@ function editarAsistencia (req, res){
 	});
 }
 
-function borrarAsistencia (req, res){
+function borrar (req, res){
 	var id = req.params.id;
 	Asistencia.findById(id, (err, asistenciaABorrar) => {
 		if(err){
@@ -50,82 +50,114 @@ function borrarAsistencia (req, res){
 			});
 		}
 	});
-
 }
 
-function listarAsistencia (req, res){
-	Asistencia.find({}).sort('alumno').exec((err, listAsistencia) => {
+function listar (req, res){
+	var periodo = req.params.periodo;
+	var page = Number(req.query.page);
+	var size = Number(req.query.size);
+	var sort = req.query.sort;
+	var query = { periodo: periodo };
+	var options = {
+	  sort: { curso: sort || 'desc' },
+	  populate: [{ path: 'alumno', select: 'nombre apellido dni localidad' }, { path: 'curso' }],
+	  lean: false,
+	  page: page || 1, 
+	  limit: size || 50
+	};
+
+	Asistencia.paginate(query, options, function(err, asistencias) {
 		if(err){
-			res.status(500).send({message: "Error al listar asistencia"});
+			res.status(500).send({message: "Error al listar asistencias"});
 		}else{
-			if(!listarInscripcion){
-				res.status(404).send({message: "Lista vacia"});
+			if(!asistencias){
+				res.status(404).send({message: "Asistencias no encontradas"});
 			}else{
-				res.status(200).send({asistencia: listAsistencia});
+				res.status(200).send({asistencias: asistencias});
 			}
 		}
 	});
 }
 
-function buscarAsistenciaPorAlumno (req, res){
-
-}
-
-function buscarAsistenciaPorId (req, res){
+function buscarPorId (req, res){
 	var id = req.params.id;
-	Asistencia.findById(id, (err, asistenciaEncontrado) => {
+	Asistencia.findById(id, (err, asistencia) => {
 		if(err){
-			res.status(500).send({message: "Error al encontrar asistencia", asistenciaId: id});
+			res.status(500).send({message: "Error al encontrar asistencia", _id: id});
 		}else{
-			if(!asistenciaEncontrado){
+			if(!asistencia){
 				res.status(404).send({message: "No encontrado"});
 			}else{
-				res.status(200).send({asistencia: asistenciaEncontrado});
+				res.status(200).send({asistencia: asistencia});
 			}
 		}
 	});
 }
 
-function buscarAsistenciaPorAlumnoYCurso (req, res){
-	var dni = req.params.dni;
-	var curso = req.params.curso;
-	var fecha = req.params.fecha;
-	Asistencia.find({ dni: dni, curso: curso, fecasis: fecha }).sort('fecasis').exec((err, asitenciasAlumno) => {
+function buscarPorId (req, res){
+	var id = req.params.id;
+	Inscripcion.findOne({id: id})
+	.populate({ path: 'periodo' })
+	.populate({ path: 'alumno' })
+	.populate({ path: 'curso' })
+	.exec((err, inscripcion) => {
 		if(err){
-			res.status(500).send({message: "Error del servidor"});
+			res.status(500).send({message: "Error al obtener la asistencia", _id: id});
 		}else{
-			if(!asitenciasAlumno){
-				res.status(404).send({message: "Asistencia no encontrada"});
+			if(!inscripcion){
+				res.status(404).send({message: "No encontrado"});
 			}else{
-				res.status(200).send({asitenciasAlumno: asitenciasAlumno});
+				res.status(200).send({inscripcion: inscripcion});
 			}
 		}
 	});
 }
 
-function buscarAsistenciaPorCursoYFecha (req, res){
+function buscarPorAlumnoYCursoYFecha (req, res){
+	var alumno = req.params.alumno;
 	var curso = req.params.curso;
 	var fecha = req.params.fecha;
-	Asistencia.find({ curso: curso, fecasis: fecha }).sort('alumno').exec((err, resultadoAsisCursoFec) => {
+	Asistencia.find({ alumno: alumno._id, curso: curso._id, fecasis: fecha })
+	.populate({ path: 'alumno' })
+	.populate({ path: 'curso' })
+	.exec((err, asistencias) => {
 		if(err){
-			res.status(500).send({message: "Error del servidor"});
+			res.status(500).send({message: "Error al buscar asistencia por fecha, alumno y curso"});
 		}else{
-			if(!resultadoAsisCursoFec){
+			if(!asistencias){
 				res.status(404).send({message: "Asistencia no encontrada"});
 			}else{
-				res.status(200).send({asistenciaCursoFecha: resultadoAsisCursoFec});
+				res.status(200).send({asistencias: asistencias});
+			}
+		}
+	});
+}
+
+function buscarPorCursoYFecha (req, res){
+	var curso = req.params.curso;
+	var fecha = req.params.fecha;
+	Asistencia.find({ curso: curso._id, fecasis: fecha })
+	.populate({ path: 'alumno' })
+	.populate({ path: 'curso' })
+	.sort('alumno').exec((err, asistencias) => {
+		if(err){
+			res.status(500).send({message: "Error al encontrar asistencias"});
+		}else{
+			if(!asistencias){
+				res.status(404).send({message: "Asistencia no encontrada"});
+			}else{
+				res.status(200).send({asistencias: asistencias});
 			}
 		}
 	});
 }
 
 module.exports = {
-	agregarAsistencia,
-	editarAsistencia,
-	borrarAsistencia,
-	listarAsistencia,
-	buscarAsistenciaPorAlumno,
-	buscarAsistenciaPorId,
-	buscarAsistenciaPorAlumnoYCurso,
-	buscarAsistenciaPorCursoYFecha
+	agregar,
+	editar,
+	borrar,
+	listar,
+	buscarPorId,
+	buscarPorAlumnoYCursoYFecha,
+	buscarPorCursoYFecha
 }

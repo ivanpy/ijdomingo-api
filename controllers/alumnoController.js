@@ -3,23 +3,22 @@
 var Alumno = require('../models/alumno');
 
 
-function agregarAlumno (req, res){
+function agregar (req, res){
 	var parametros = req.body;
 	var alumno = new Alumno();
 	alumno.nombre = parametros.nombre;
 	alumno.apellido = parametros.apellido;
-	alumno.nacionalidad = parametros.nacionalidad;
 	alumno.fecnac = parametros.fecnac;
 	alumno.dni = parametros.dni;
 	alumno.sexo = parametros.sexo;
 	alumno.email = parametros.email;
 	alumno.fijo = parametros.fijo;
 	alumno.celular = parametros.celular;
-	alumno.provincia = parametros.provincia;
-	alumno.localidad = parametros.localidad;
 	alumno.domicilio = parametros.domicilio;
 	alumno.barrio = parametros.barrio;
 	alumno.ocupacion = parametros.ocupacion;
+	alumno.localidad = parametros.localidad._id;
+	alumno.nacionalidad = parametros.nacionalidad._id;
 	alumno.save((err, alumnoGuardado) => {
 		if(err){
 			res.status(500).send({message: "Error al guardar el alumno"});
@@ -29,30 +28,30 @@ function agregarAlumno (req, res){
 	});
 }
 
-function editarAlumno (req, res){
+function editar (req, res){
 	var id = req.params.id;
 	var parametros = req.body;
 	Alumno.findByIdAndUpdate(id, parametros, (err, alumnoEditado) => {
 		if(err){
-			res.status(500).send({message: "Error al editar alumno", alumnoId: id});
+			res.status(500).send({message: "Error al editar alumno", _id: id});
 		}else{
 			res.status(200).send({message: "Exito al editar alumno", alumno: alumnoEditado});
 		}
 	});
 }
 
-function borrarAlumno (req, res){
+function borrar (req, res){
 	var id = req.params.id;
 	Alumno.findById(id, (err, alumnoABorrar) => {
 		if(err){
-			res.status(500).send({message: "Error al encontrar el alumno", alumnoId: id});
+			res.status(500).send({message: "Error al encontrar el alumno", _id: id});
 		}
 		if(!alumnoABorrar){
 			res.status(404).send({message: "Alumno no encontrado"});
 		}else{
 			alumnoABorrar.remove(err => {
 				if(err){
-					res.status(500).send({message: "Error al borrar el alumno", alumnoId: id});
+					res.status(500).send({message: "Error al borrar el alumno", _id: id});
 				}else{
 					res.status(200).send({message: "Exito al borrar", alumno: alumnoABorrar});
 				}
@@ -62,28 +61,43 @@ function borrarAlumno (req, res){
 
 }
 
-function listarAlumnos (req, res){
-	Alumno.find({}).sort('apellido').exec((err, listAlumnos) => {
+function listar (req, res){
+	var page = Number(req.query.page);
+	var size = Number(req.query.size);
+	var sort = req.query.sort;
+	var query = {};
+	var options = {
+	  sort: { nombre: sort || 'desc' },
+	  populate: [{ path: 'localidad', select: 'nombre' }, { path: 'nacionalidad', select: 'nombre' }],
+	  lean: false,
+	  page: page || 1, 
+	  limit: size || 50
+	};
+
+	Alumno.paginate(query, options, function(err, alumnos) {
 		if(err){
 			res.status(500).send({message: "Error al listar alumnos"});
 		}else{
-			if(!listAlumnos){
-				res.status(404).send({message: "Lista vacia"});
+			if(!alumnos){
+				res.status(404).send({message: "Alumnnos no encontrado"});
 			}else{
-				res.status(200).send({alumnos: listAlumnos});
+				res.status(200).send({alumnos: alumnos});
 			}
 		}
 	});
 }
 
-function buscarAlumnoPorDni (req, res){
+function buscarPorDni (req, res){
 	var dni = req.params.dni;
-	Alumno.find({dni: dni}).exec((err, alumnoDni) => {
+	Alumno.find({dni: dni})
+	.populate({ path: 'localidad', select: 'nombre' })
+	.populate({ path: 'nacionalidad', select: 'nombre' })
+	.exec((err, alumno) => {
 		if(err){
 			res.status(500).send({message: "Error al listar alumnos"});
 		}else{
 			if(!alumnoDni){
-				res.status(404).send({message: "Lista vacia"});
+				res.status(404).send({message: "Datos no encontrados"});
 			}else{
 				res.status(200).send({alumnoDni: alumnoDni});
 			}
@@ -91,26 +105,29 @@ function buscarAlumnoPorDni (req, res){
 	});
 }
 
-function buscarAlumnoPorId (req, res){
+function buscarPorId (req, res){
 	var id = req.params.id;
-	Alumno.findById(id, (err, alumnoEncontrado) => {
+	Alumno.findOne({_id: id})
+	.populate({ path: 'localidad' })
+	.populate({ path: 'nacionalidad' })
+	.exec((err, alumno) => {
 		if(err){
-			res.status(500).send({message: "Error al encontrar el alumno", alumnoId: id});
+			res.status(500).send({message: "Error al obtener alumno por Id"});
 		}else{
-			if(!alumnoEncontrado){
-				res.status(404).send({message: "No encontrado"});
+			if(!alumno){
+				res.status(404).send({message: "Alumno no encontrado"});
 			}else{
-				res.status(200).send({alumno: alumnoEncontrado});
+				res.status(200).send({alumno: alumno});
 			}
 		}
 	});
 }
 
 module.exports = {
-	agregarAlumno,
-	editarAlumno,
-	borrarAlumno,
-	listarAlumnos,
-	buscarAlumnoPorDni,
-	buscarAlumnoPorId
+	agregar,
+	editar,
+	borrar,
+	listar,
+	buscarPorDni,
+	buscarPorId
 }

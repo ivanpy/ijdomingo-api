@@ -3,25 +3,25 @@
 var Inscripcion = require('../models/inscripcion');
 
 
-function agregarInscripcion (req, res){
+function agregar (req, res){
 	var parametros = req.body;
 	var inscripcion = new Inscripcion();
-	inscripcion.dni = parametros.dni;
-	inscripcion.alumno = parametros.alumno;
-	inscripcion.curso = parametros.curso;
 	inscripcion.fecinsc = parametros.fecinsc;
 	inscripcion.estadoc = parametros.estadoc;
 	inscripcion.estado = parametros.estado;
+	inscripcion.periodo = parametros.periodo._id;
+	inscripcion.alumno = parametros.alumno._id;
+	inscripcion.curso = parametros.curso._id;
 	inscripcion.save((err, inscripcionGuardado) => {
 		if(err){
 			res.status(500).send({message: "Error al guardar inscripción"});
 		}else{
-			res.status(200).send({message: "Dato de la inscripcion guardado", inscripcion: inscripcionGuardado});
+			res.status(200).send({message: "Datos de la inscripcion guardado", inscripcion: inscripcionGuardado});
 		}
 	});
 }
 
-function editarInscripcion (req, res){
+function editar (req, res){
 	var id = req.params.id;
 	var parametros = req.body;
 	Inscripcion.findByIdAndUpdate(id, parametros, (err, inscripcionEditado) => {
@@ -33,7 +33,7 @@ function editarInscripcion (req, res){
 	});
 }
 
-function borrarInscripcion (req, res){
+function borrar (req, res){
 	var id = req.params.id;
 	Inscripcion.findById(id, (err, inscripcionABorrar) => {
 		if(err){
@@ -54,23 +54,40 @@ function borrarInscripcion (req, res){
 
 }
 
-function listarInscripciones (req, res){
-	Inscripcion.find({ estado: true }).sort('curso').exec((err, listaInscripciones) => {
+function listar (req, res){
+	var periodo = req.params.periodo;
+	var page = Number(req.query.page);
+	var size = Number(req.query.size);
+	var sort = req.query.sort;
+	var query = { periodo: periodo };
+	var options = {
+	  sort: { curso: sort || 'desc' },
+	  populate: [{ path: 'alumno', select: 'nombre apellido dni localidad' }, { path: 'curso' }],
+	  lean: false,
+	  page: page || 1, 
+	  limit: size || 50
+	};
+
+	Inscripcion.paginate(query, options, function(err, inscripciones) {
 		if(err){
-			res.status(500).send({message: "Error al listar inscripcion"});
+			res.status(500).send({message: "Error al obtener las inscripciones"});
 		}else{
-			if(!listaInscripciones){
-				res.status(404).send({message: "Lista vacia"});
+			if(!inscripciones){
+				res.status(404).send({message: "No encontrado"});
 			}else{
-				res.status(200).send({inscripcion: listaInscripciones});
+				res.status(200).send({inscripciones: inscripciones});
 			}
 		}
 	});
 }
 
-function buscarInscripcionPorDni (req, res){
-	var dni = req.params.dni;
-	Inscripcion.find({ dni: dni, estado: true }).sort('curso').exec((err, resultadoInscripcion) => {
+function buscarPorAlumno (req, res){
+	var periodo = req.params.periodo;
+	var alumno = req.params.alumno;
+	Inscripcion.find({ periodo: periodo._id, alumno: alumno._id, estado: true })
+	.populate({ path: 'alumno' })
+	.populate({ path: 'curso' })
+	.sort('curso').exec((err, resultadoInscripcion) => {
 		if(err){
 			res.status(500).send({message: "Error del servidor"});
 		}else{
@@ -83,40 +100,52 @@ function buscarInscripcionPorDni (req, res){
 	});
 }
 
-function buscarInscripcionPorDniYCurso (req, res){
-	var dni = req.params.dni;
+function buscarPorAlumnoYCurso (req, res){
+	var periodo = req.params.periodo;
+	var alumno = req.params.alumno;
 	var curso = req.params.curso;
-	var dni = req.params.dni;
-	Inscripcion.find({ dni: dni, curso: curso, estado: true }).sort('curso').exec((err, inscripcionesDniCurso) => {
+	Inscripcion.find({ periodo: periodo._id, alumno: alumno._id, curso: curso._id, estado: true })
+	.populate({ path: 'alumno' })
+	.populate({ path: 'curso' })
+	.sort('curso').exec((err, inscripcion) => {
 		if(err){
 			res.status(500).send({message: "Error del servidor"});
 		}else{
-			if(!inscripcionesDniCurso){
-				res.status(404).send({message: "Inscripcion no encontrada"});
+			if(!inscripcion){
+				res.status(404).send({message: "No encontrado"});
 			}else{
-				res.status(200).send({inscripcionesDniCurso: inscripcionesDniCurso});
+				res.status(200).send({inscripcion: inscripcion});
 			}
 		}
 	});
 }
 
-function buscarInscripcionPorCurso (req, res){
+function buscarPorCurso (req, res){
+	var periodo = req.params.periodo;
 	var curso = req.params.curso;
-	Inscripcion.find({ curso: curso, estado: true }).sort('alumno').exec((err, inscripcionesCurso) => {
+	Inscripcion.find({ periodo: periodo._id, curso: curso._id, estado: true })
+	.populate({ path: 'alumno' })
+	.populate({ path: 'curso' })
+	.sort('alumno').exec((err, inscripciones) => {
 		if(err){
 			res.status(500).send({message: "Error del servidor"});
 		}else{
-			if(!inscripcionesCurso){
+			if(!inscripciones){
 				res.status(404).send({message: "Inscripcion no encontrada"});
 			}else{
-				res.status(200).send({inscripcionesCurso: inscripcionesCurso});
+				res.status(200).send({inscripciones: inscripciones});
 			}
 		}
 	});
 }
 
-function buscarInscripcionPorEstadoc (req, res){
-	Inscripcion.find({ estadoc: false, estado: true }).sort('alumno').exec((err, estadoDocumentos) => {
+function buscarPorEstadoc (req, res){
+	var periodo = req.params.periodo;
+	Inscripcion.find({ periodo: periodo._id, estadoc: false, estado: true })
+	.populate({ path: 'periodo', select: "nombre" })
+	.populate({ path: 'alumno' })
+	.populate({ path: 'curso' })
+	.sort('alumno').exec((err, estadoDocumentos) => {
 		if(err){
 			res.status(500).send({message: "Error del servidor"});
 		}else{
@@ -129,29 +158,33 @@ function buscarInscripcionPorEstadoc (req, res){
 	});
 }
 
-function buscarInscripcionPorId (req, res){
+function buscarPorId (req, res){
 	var id = req.params.id;
-	Inscripcion.findById(id, (err, inscripcionEncontrado) => {
+	Inscripcion.findOne({id: id})
+	.populate({ path: 'periodo' })
+	.populate({ path: 'alumno' })
+	.populate({ path: 'curso' })
+	.exec((err, inscripcion) => {
 		if(err){
-			res.status(500).send({message: "Error al encontrar inscripcion", inscripcionId: id});
+			res.status(500).send({message: "Error al obtener la inscripcion", _id: id});
 		}else{
-			if(!inscripcionEncontrado){
+			if(!inscripcion){
 				res.status(404).send({message: "No encontrado"});
 			}else{
-				res.status(200).send({inscripcion: inscripcionEncontrado});
+				res.status(200).send({inscripcion: inscripcion});
 			}
 		}
 	});
 }
 
 module.exports = {
-	agregarInscripcion,
-	editarInscripcion,
-	borrarInscripcion,
-	listarInscripciones,
-	buscarInscripcionPorDni,
-	buscarInscripcionPorDniYCurso,
-	buscarInscripcionPorId,
-	buscarInscripcionPorEstadoc,
-	buscarInscripcionPorCurso
+	agregar,
+	editar,
+	borrar,
+	listar,
+	buscarPorAlumno,
+	buscarPorAlumnoYCurso,
+	buscarPorId,
+	buscarPorEstadoc,
+	buscarPorCurso
 }

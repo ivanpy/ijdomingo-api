@@ -3,17 +3,16 @@
 var Nota = require('../models/nota');
 
 
-function agregarNota (req, res){
+function agregar (req, res){
 	var parametros = req.body;
 	var nota = new Nota();
-	nota.dni = parametros.dni;
-	nota.alumno = parametros.alumno;
-	nota.curso = parametros.curso;
 	nota.exaparcial = parametros.exaparcial;
 	nota.exafinal = parametros.exafinal;
 	nota.exatotal = parametros.exatotal;
 	nota.asistencia = parametros.asistencia;
-	nota.periodo = parametros.periodo;
+	nota.periodo = parametros.periodo._id;
+	nota.alumno = parametros.alumno._id;
+	nota.curso = parametros.curso._id;
 	nota.save((err, notaGuardada) => {
 		if(err){
 			res.status(500).send({message: "Error al guardar la nota"});
@@ -23,7 +22,7 @@ function agregarNota (req, res){
 	});
 }
 
-function editarNota (req, res){
+function editar (req, res){
 	var id = req.params.id;
 	var parametros = req.body;
 	Nota.findByIdAndUpdate(id, parametros, (err, notaEditada) => {
@@ -35,7 +34,7 @@ function editarNota (req, res){
 	});
 }
 
-function borrarNota (req, res){
+function borrar (req, res){
 	var id = req.params.id;
 	Nota.findById(id, (err, notaABorrar) => {
 		if(err){
@@ -56,23 +55,40 @@ function borrarNota (req, res){
 
 }
 
-function listarNotas (req, res){
-	Nota.find({}).sort('curso').exec((err, listaNotas) => {
+function listar (req, res){
+	var periodo = req.params.periodo;
+	var page = Number(req.query.page);
+	var size = Number(req.query.size);
+	var sort = req.query.sort;
+	var query = { periodo: periodo };
+	var options = {
+	  sort: { curso: sort || 'desc' },
+	  populate: [{ path: 'alumno', select: 'nombre apellido dni localidad' }, { path: 'curso' }],
+	  lean: false,
+	  page: page || 1, 
+	  limit: size || 50
+	};
+
+	Nota.paginate(query, options, function(err, notas) {
 		if(err){
 			res.status(500).send({message: "Error al listar las notas"});
 		}else{
-			if(!listaNotas){
-				res.status(404).send({message: "Lista vacia"});
+			if(!notas){
+				res.status(404).send({message: "Notas no encontradas"});
 			}else{
-				res.status(200).send({notas: listaNotas});
+				res.status(200).send({notas: notas});
 			}
 		}
 	});
 }
 
-function buscarNotaPorDni (req, res){
-	var dni = req.params.dni;
-	Nota.find({ dni: dni }).sort('curso').exec((err, resultadoBusqueda) => {
+function buscarPorAlumno (req, res){
+	var periodo = req.params.periodo;
+	var alumno = req.params.alumno;
+	Nota.find({ periodo: periodo._id, alumno: alumno._id })
+	.populate({ path: 'alumno' })
+	.populate({ path: 'curso' })
+	.exec((err, resultadoBusqueda) => {
 		if(err){
 			res.status(500).send({message: "Error del servidor"});
 		}else{
@@ -85,10 +101,14 @@ function buscarNotaPorDni (req, res){
 	});
 }
 
-function buscarNotaPorDniYCurso (req, res){
-	var dni = req.params.dni;
+function buscarPorAlumnoYCurso (req, res){
+	var periodo = req.params.periodo;
+	var alumno = req.params.alumno;
 	var curso = req.params.curso;
-	Nota.find({ dni: dni, curso: curso }).sort('curso').exec((err, resultadoBusqueda) => {
+	Nota.find({ periodo: periodo._id, alumno: alumno._id, curso: curso._id })
+	.populate({ path: 'alumno' })
+	.populate({ path: 'curso' })
+	.exec((err, resultadoBusqueda) => {
 		if(err){
 			res.status(500).send({message: "Error del servidor"});
 		}else{
@@ -101,43 +121,45 @@ function buscarNotaPorDniYCurso (req, res){
 	});
 }
 
-function buscarNotaPorCurso (req, res){
+function buscarPorCurso (req, res){
+	var periodo = req.params.periodo;
 	var curso = req.params.curso;
-	Nota.find({ curso: curso }).sort('alumno').exec((err, resultadoBusqueda) => {
+	Nota.find({ periodo: periodo._id, curso: curso._id })
+	.sort('alumno').exec((err, notas) => {
 		if(err){
 			res.status(500).send({message: "Error del servidor"});
 		}else{
-			if(!resultadoBusqueda){
-				res.status(404).send({message: "Nota no encontrada"});
+			if(!notas){
+				res.status(404).send({message: "Notas no encontrada"});
 			}else{
-				res.status(200).send({notaCurso: resultadoBusqueda});
+				res.status(200).send({notas: notas});
 			}
 		}
 	});
 }
 
-function buscarNotaPorId (req, res){
+function buscarPorId (req, res){
 	var id = req.params.id;
-	Nota.findById(id, (err, resultadoBusqueda) => {
+	Nota.findById(id, (err, nota) => {
 		if(err){
-			res.status(500).send({message: "Error al encontrar la nota", notaId: id});
+			res.status(500).send({message: "Error al encontrar la nota", _id: id});
 		}else{
-			if(!resultadoBusqueda){
+			if(!nota){
 				res.status(404).send({message: "Nota no encontrada"});
 			}else{
-				res.status(200).send({nota: resultadoBusqueda});
+				res.status(200).send({nota: nota});
 			}
 		}
 	});
 }
 
 module.exports = {
-	agregarNota,
-	editarNota,
-	borrarNota,
-	listarNotas,
-	buscarNotaPorDni,
-	buscarNotaPorDniYCurso,
-	buscarNotaPorId,
-	buscarNotaPorCurso
+	agregar,
+	editar,
+	borrar,
+	listar,
+	buscarPorAlumno,
+	buscarPorAlumnoYCurso,
+	buscarPorId,
+	buscarPorCurso
 }

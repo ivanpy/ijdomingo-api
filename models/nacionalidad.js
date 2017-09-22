@@ -5,9 +5,9 @@ var mongoosePaginate = require('mongoose-paginate');
 
 var Schema = mongoose.Schema;
 
-var CursoSchema = Schema({
+var NacionalidadSchema = Schema({
 	nombre: String
 });
 
-CursoSchema.plugin(mongoosePaginate);
-module.exports = mongoose.model('Curso', CursoSchema);
+NacionalidadSchema.plugin(mongoosePaginate);
+module.exports = mongoose.model('Nacionalidad', NacionalidadSchema);

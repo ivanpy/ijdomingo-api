@@ -3,23 +3,22 @@
 var Docente = require('../models/docente');
 
 
-function agregarDocente (req, res){
+function agregar (req, res){
 	var parametros = req.body;
 	var docente = new Docente();
 	docente.nombre = parametros.nombre;
 	docente.apellido = parametros.apellido;
-	docente.nacionalidad = parametros.nacionalidad;
 	docente.fecnac = parametros.fecnac;
 	docente.dni = parametros.dni;
 	docente.sexo = parametros.sexo;
 	docente.email = parametros.email;
 	docente.fijo = parametros.fijo;
 	docente.celular = parametros.celular;
-	docente.provincia = parametros.provincia;
-	docente.localidad = parametros.localidad;
 	docente.domicilio = parametros.domicilio;
 	docente.barrio = parametros.barrio;
 	docente.ocupacion = parametros.ocupacion;
+	docente.nacionalidad = parametros.nacionalidad._id;
+	docente.localidad = parametros.localidad._id;
 	docente.save((err, docenteGuardado) => {
 		if(err){
 			res.status(500).send({message: "Error al guardar el docente"});
@@ -29,7 +28,7 @@ function agregarDocente (req, res){
 	});
 }
 
-function editarDocente (req, res){
+function editar (req, res){
 	var id = req.params.id;
 	var parametros = req.body;
 	Docente.findByIdAndUpdate(id, parametros, (err, docenteEditado) => {
@@ -41,7 +40,7 @@ function editarDocente (req, res){
 	});
 }
 
-function borrarDocente (req, res){
+function borrar (req, res){
 	var id = req.params.id;
 	Docente.findById(id, (err, docenteABorrar) => {
 		if(err){
@@ -62,55 +61,73 @@ function borrarDocente (req, res){
 
 }
 
-function listarDocentes (req, res){
-	Docente.find({}).sort('apellido').exec((err, listDocentes) => {
+function listar (req, res){
+	var page = Number(req.query.page);
+	var size = Number(req.query.size);
+	var sort = req.query.sort;
+	var query = {};
+	var options = {
+	  sort: { nombre: sort || 'desc' },
+	  populate: [{ path: 'localidad', select: 'nombre' }, { path: 'nacionalidad', select: 'nombre' }],
+	  lean: false,
+	  page: page || 1, 
+	  limit: size || 50
+	};
+
+	Docente.paginate(query, options, function(err, docentes) {
 		if(err){
-			res.status(500).send({message: "Error al listar docentes"});
+			res.status(500).send({message: "Error al obtener docentes"});
 		}else{
-			if(!listDocentes){
-				res.status(404).send({message: "Lista vacia"});
+			if(!docentes){
+				res.status(404).send({message: "No encontrado"});
 			}else{
-				res.status(200).send({docentes: listDocentes});
+				res.status(200).send({docentes: docentes});
 			}
 		}
 	});
 }
 
-function buscarDocentePorDni (req, res){
+function buscarPorDni (req, res){
 	var dni = req.params.dni;
-	Docente.find({dni: dni}).exec((err, doncenteDni) => {
+	Docente.find({dni: dni})
+	.populate({ path: 'localidad', select: 'nombre' })
+	.populate({ path: 'nacionalidad', select: 'nombre' })
+	.exec((err, docente) => {
 		if(err){
 			res.status(500).send({message: "Error al buscar el docente"});
 		}else{
-			if(!doncenteDni){
-				res.status(404).send({message: "Lista vacia"});
+			if(!docente){
+				res.status(404).send({message: "No encontrado"});
 			}else{
-				res.status(200).send({doncenteDni: doncenteDni});
+				res.status(200).send({docente: docente});
 			}
 		}
 	});
 }
 
-function buscarDocentePorId (req, res){
+function buscarPorId (req, res){
 	var id = req.params.id;
-	Docente.findById(id, (err, docenteEncontrado) => {
+	Docente.findOne({id: id})
+	.populate({ path: 'localidad', select: 'nombre' })
+	.populate({ path: 'nacionalidad', select: 'nombre' })
+	.exec((err, docente) => {
 		if(err){
 			res.status(500).send({message: "Error al encontrar el docente", docenteId: id});
 		}else{
-			if(!docenteEncontrado){
+			if(!docente){
 				res.status(404).send({message: "No encontrado"});
 			}else{
-				res.status(200).send({docente: docenteEncontrado});
+				res.status(200).send({docente: docente});
 			}
 		}
 	});
 }
 
 module.exports = {
-	agregarDocente,
-	editarDocente,
-	borrarDocente,
-	listarDocentes,
-	buscarDocentePorDni,
-	buscarDocentePorId
+	agregar,
+	editar,
+	borrar,
+	listar,
+	buscarPorDni,
+	buscarPorId
 }
