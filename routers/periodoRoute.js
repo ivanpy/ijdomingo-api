@@ -19,4 +19,7 @@ router.delete('/periodo/borrar/:id', periodoController.borrar);
 //ruta para listar periodo
 router.get('/periodos', periodoController.listar);
 
+//ruta para periodo activo
+router.get('/periodo/activo', periodoController.activo);
+
 module.exports = router;

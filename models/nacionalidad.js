@@ -6,7 +6,8 @@ var mongoosePaginate = require('mongoose-paginate');
 var Schema = mongoose.Schema;
 
 var NacionalidadSchema = Schema({
-	nombre: String
+	nombre: String,
+	pais: String
 });
 
 NacionalidadSchema.plugin(mongoosePaginate);

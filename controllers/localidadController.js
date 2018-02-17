@@ -56,7 +56,7 @@ function listar (req, res){
 	var sort = req.query.sort;
 	var query = {};
 	var options = {
-	  sort: { nombre: sort || 'desc' },
+	  sort: { provincia: sort || 'desc' },
 	  populate: 'provincia',
 	  lean: false,
 	  page: page || 1, 
@@ -69,7 +69,7 @@ function listar (req, res){
 			if(!localidades){
 				res.status(404).send({message: "No encontrado"});
 			}else{
-				res.status(200).send({localidad: localidades});
+				res.status(200).send({localidades: localidades.docs});
 			}
 		}
 	});
@@ -91,11 +91,9 @@ function buscarPorId (req, res){
 }
 
 function buscarPorProvincia (req, res){
-	var provincia_id = req.params.provincia;
-	//var stringify = JSON.stringify(data)
-	//var provincia = JSON.parse(data); 
-	//var provincia = JSON.parse(jsonDecoded);
-	Localidad.find({ provincia: provincia_id })
+	var provincia = req.params.provincia;
+	Localidad.find({ provincia: provincia })
+	.populate({ path: 'provincia' })
 	.exec((err, localidades) => {
 		if(err){
 			res.status(500).send({message: "Error del servidor"});

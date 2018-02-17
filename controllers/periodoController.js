@@ -8,6 +8,7 @@ function agregar (req, res){
 	var periodo = new Periodo();
 	periodo.nombre = parametros.nombre;
 	periodo.descripcion = parametros.descripcion;
+	periodo.estado = parametros.estado;
 	periodo.save((err, periodoGuardado) => {
 		if(err){
 			res.status(500).send({message: "Error al guardar la periodo"});
@@ -64,6 +65,20 @@ function listar (req, res){
 	});
 }
 
+function activo (req, res){
+	Periodo.findOne({estado: true}).exec((err, periodo) => {
+		if(err){
+			res.status(500).send({message: "Error al obtener las periodo"});
+		}else{
+			if(!periodo){
+				res.status(404).send({message: "No encontrado"});
+			}else{
+				res.status(200).send({periodo: periodo});
+			}
+		}
+	});
+}
+
 function buscarPorId (req, res){
 	var id = req.params.id;
 	Periodo.findById(id, (err, periodo) => {
@@ -84,5 +99,6 @@ module.exports = {
 	editar,
 	borrar,
 	listar,
-	buscarPorId
+	buscarPorId,
+	activo
 }

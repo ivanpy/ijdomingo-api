@@ -81,7 +81,7 @@ function listar (req, res){
 			if(!alumnos){
 				res.status(404).send({message: "Alumnnos no encontrado"});
 			}else{
-				res.status(200).send({alumnos: alumnos});
+				res.status(200).send({alumnos: alumnos.docs});
 			}
 		}
 	});

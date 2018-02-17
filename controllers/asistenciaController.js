@@ -73,7 +73,7 @@ function listar (req, res){
 			if(!asistencias){
 				res.status(404).send({message: "Asistencias no encontradas"});
 			}else{
-				res.status(200).send({asistencias: asistencias});
+				res.status(200).send({asistencias: asistencias.docs});
 			}
 		}
 	});

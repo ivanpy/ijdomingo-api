@@ -69,7 +69,7 @@ function listar (req, res){
 			if(!provincias){
 				res.status(404).send({message: "No encontrado"});
 			}else{
-				res.status(200).send({provincia: provincias});
+				res.status(200).send({provincias: provincias.docs});
 			}
 		}
 	});

@@ -68,7 +68,7 @@ function listar (req, res){
 			if(!cursos){
 				res.status(404).send({message: "No encontrado"});
 			}else{
-				res.status(200).send({curso: cursos});
+				res.status(200).send({cursos: cursos.docs});
 			}
 		}
 	});

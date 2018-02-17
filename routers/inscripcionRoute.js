@@ -23,7 +23,7 @@ router.get('/inscripcion/buscar/alumno/:alumno', inscripcionController.buscarPor
 router.get('/inscripcion/buscar/alumno-curso/:alumno/:curso', inscripcionController.buscarPorAlumnoYCurso);
 
 //Ruta para buscar por curso
-router.get('/inscripcion/buscar/curso/:curso', inscripcionController.buscarPorCurso);
+router.get('/inscripcion/buscar/curso/:periodo', inscripcionController.buscarPorCurso);
 
 //Ruta para buscar por el estado de docuemento
 router.get('/inscripcion/buscar/doc-pendientes/:periodo/docPendientes', inscripcionController.buscarPorEstadoc);

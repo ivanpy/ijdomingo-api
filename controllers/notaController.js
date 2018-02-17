@@ -76,7 +76,7 @@ function listar (req, res){
 			if(!notas){
 				res.status(404).send({message: "Notas no encontradas"});
 			}else{
-				res.status(200).send({notas: notas});
+				res.status(200).send({notas: notas.docs});
 			}
 		}
 	});

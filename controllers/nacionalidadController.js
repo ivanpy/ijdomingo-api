@@ -7,6 +7,7 @@ function agregar (req, res){
 	var parametros = req.body;
 	var nacionalidad = new Nacionalidad();
 	nacionalidad.nombre = parametros.nombre;
+	nacionalidad.pais = parametros.pais;
 	nacionalidad.save((err, nacionalidadGuardado) => {
 		if(err){
 			res.status(500).send({message: "Error al guardar la nacionalidad"});
@@ -68,7 +69,7 @@ function listar (req, res){
 			if(!nacionalidades){
 				res.status(404).send({message: "No encontrado"});
 			}else{
-				res.status(200).send({nacionalidad: nacionalidades});
+				res.status(200).send({nacionalidades: nacionalidades.docs});
 			}
 		}
 	});

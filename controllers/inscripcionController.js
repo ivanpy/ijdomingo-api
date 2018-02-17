@@ -1,7 +1,7 @@
 'use stritc'
 
 var Inscripcion = require('../models/inscripcion');
-
+var mongoose = require('mongoose');
 
 function agregar (req, res){
 	var parametros = req.body;
@@ -75,7 +75,7 @@ function listar (req, res){
 			if(!inscripciones){
 				res.status(404).send({message: "No encontrado"});
 			}else{
-				res.status(200).send({inscripciones: inscripciones});
+				res.status(200).send({inscripciones: inscripciones.docs});
 			}
 		}
 	});
@@ -122,18 +122,27 @@ function buscarPorAlumnoYCurso (req, res){
 
 function buscarPorCurso (req, res){
 	var periodo = req.params.periodo;
-	var curso = req.params.curso;
-	Inscripcion.find({ periodo: periodo._id, curso: curso._id, estado: true })
-	.populate({ path: 'alumno' })
-	.populate({ path: 'curso' })
-	.sort('alumno').exec((err, inscripciones) => {
+	var curso = req.query.curso;
+	var page = Number(req.query.page);
+	var size = Number(req.query.size);
+	var sort = req.query.sort;
+	var query = { periodo: periodo, curso: curso };
+	var options = {
+	  sort: { curso: sort || 'desc' },
+	  populate: [{ path: 'alumno', select: 'nombre apellido dni localidad' }, { path: 'curso' }],
+	  lean: false,
+	  page: page || 1, 
+	  limit: size || 50
+	};
+
+	Inscripcion.paginate(query, options, function(err, inscripciones) {
 		if(err){
-			res.status(500).send({message: "Error del servidor"});
+			res.status(500).send({message: "Error al obtener las inscripciones "+ err});
 		}else{
 			if(!inscripciones){
-				res.status(404).send({message: "Inscripcion no encontrada"});
+				res.status(404).send({message: "No encontrado"});
 			}else{
-				res.status(200).send({inscripciones: inscripciones});
+				res.status(200).send({inscripciones: inscripciones.docs});
 			}
 		}
 	});

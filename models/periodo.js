@@ -6,7 +6,8 @@ var Schema = mongoose.Schema;
 
 var PeriodoSchema = Schema({
 	nombre: String,
-	descripcion: String
+	descripcion: String,
+	estado: Boolean
 });
 
 PeriodoSchema.plugin(mongoosePaginate);
